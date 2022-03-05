@@ -15,4 +15,10 @@
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Avatars\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Avatars\" />
+  </ItemGroup>
 </Project>
