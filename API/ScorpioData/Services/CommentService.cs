@@ -38,6 +38,7 @@ namespace ScorpioData.Services
             {
                 Text = comment.Text,
                 UserId = user.Id,
+                PostedDate = DateTime.UtcNow,
             };
             _context.Comments.Add(newComment);
             _context.SaveChanges();

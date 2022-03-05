@@ -9,6 +9,7 @@ namespace ScorpioData.Dtos
 		public string? Text { get; set; }
 		public int UserId { get; set; }
 		public UserDto? User { get; set; }
+		public DateTime PostedDate { get; set; }
 	}
 }
 
