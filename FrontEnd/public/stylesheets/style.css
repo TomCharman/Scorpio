@@ -12,3 +12,37 @@ h1 {
   font-weight: bold;
   font-size: 18px;
 }
+
+#postComment {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#postComment textarea {
+  border: 1px solid #E5E5E5;
+  background: #FFFFFF;
+  border-radius: 4px;
+  padding: 6px 10px;
+  flex: 1;
+}
+
+#postComment button {
+  background: #7E34F7;
+  border-radius: 4px;
+  padding: 6px 12px;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 16.5px;
+  border: none;
+  cursor: pointer;
+}
+
+#postComment button:hover {
+  box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12);
+}
+
+a {
+  color: #00B7FF;
+}
