@@ -1,3 +1,5 @@
+﻿using ScorpioData;
+using ScorpioData.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,10 @@ builder.Services.AddCors(c =>
     c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
 });
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 28));
 var connectionString = "server=localhost;user=root;password=***REMOVED***;database=ef";
 builder.Services.AddDbContext<Context>(options => options.UseMySql(connectionString, serverVersion, mySqlOptions => mySqlOptions.EnableRetryOnFailure())
