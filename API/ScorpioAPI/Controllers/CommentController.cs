@@ -38,6 +38,11 @@ namespace ScorpioAPI.Controllers
         {
             return _commentService.PostComment(comment);
         }
+
+        [HttpPut("{id}/vote")]
+        public async Task<ActionResult<CommentDto?>> UpvoteCommentAsync(int id){
+            return await _commentService.UpvoteCommentAsync(id);
+        }
     }
 }
 

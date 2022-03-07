@@ -10,6 +10,7 @@ namespace ScorpioData.Dtos
 		public int UserId { get; set; }
 		public UserDto? User { get; set; }
 		public DateTime PostedDate { get; set; }
+		public int? VoteCount { get; set; }
 	}
 }
 

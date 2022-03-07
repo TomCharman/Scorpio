@@ -1,4 +1,4 @@
-import { getComments, getMe, postComment } from "./api.js"
+import { getComments, getMe, postComment, putVote } from "./api.js"
 import { makeAvatar, makeComment } from "./components.js"
 
 console.log('hi')
@@ -14,12 +14,28 @@ const setMe = (me) => {
     myAvatar.innerHTML = makeAvatar(me)
 }
 
+const onVote = (commentId) => {
+    console.log('does this even work', commentId)
+    putVote(commentId)
+}
+
 const drawComments = () => {
     const html = comments
         .map(c => makeComment(c))
         .join('\n')
 
     commentContainer.innerHTML = html
+
+    comments.forEach(c => {
+        var comment = document.getElementById(`comment-${c.id}`)
+        
+        if (comment) {
+            comment.onclick = () => onVote(c.id)
+        }
+        
+        // .onclick = () => onVote(c.id)
+        console.log('comment', c.id, comment)
+    })
 }
 
 commentButton.onclick = function(e) {

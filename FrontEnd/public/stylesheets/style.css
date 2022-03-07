@@ -86,3 +86,9 @@ hr {
   margin: 4px 0 14px;
 }
 
+.commentLinks a {
+  color: #4B587C;
+  font-size: 11px;
+  margin-right: 28px;
+  cursor: pointer;
+}

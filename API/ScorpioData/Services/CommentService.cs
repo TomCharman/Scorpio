@@ -9,6 +9,7 @@ namespace ScorpioData.Services
     {
 		public List<CommentDto> GetComments();
 		public CommentDto PostComment(CommentDto comment);
+        Task<CommentDto?> UpvoteCommentAsync(int commentId);
     }
 
 	public class CommentService: ICommentService
@@ -22,11 +23,31 @@ namespace ScorpioData.Services
             _userService = userService;
 		}
 
+        private CommentDto? GetComment(int commentId)
+        {
+            return _context.Comments
+                .Include(c => c.User)
+                .Include(c => c.Votes)
+                .FirstOrDefault(c => c.Id == commentId)?
+                .ToDto();
+        }
+
         public List<CommentDto> GetComments()
         {
 			var comments = _context.Comments
                 .Include(c => c.User)
-                .Select(c => c.ToDto())
+                .Select(c => new
+                {
+                    Comment = c,
+                    VoteCount = c.Votes.Count,
+                })
+                .ToList()
+                .Select(c =>
+                {
+                    var comment = c.Comment.ToDto();
+                    comment.VoteCount = c.VoteCount;
+                    return comment;
+                })
                 .ToList();
 			return comments;
         }
@@ -43,6 +64,28 @@ namespace ScorpioData.Services
             _context.Comments.Add(newComment);
             _context.SaveChanges();
             return newComment.ToDto();
+        }
+
+        public async Task<CommentDto?> UpvoteCommentAsync(int commentId)
+        {
+            var user = _userService.Me();
+
+            var existingVote = _context.Votes
+                .FirstOrDefault(v => v.CommentId == commentId && v.UserId == user.Id);
+
+            if (existingVote == null)
+            {
+                var newVote = new Vote
+                {
+                    CommentId = commentId,
+                    UserId = user.Id,
+                };
+
+                await _context.Votes.AddAsync(newVote);
+                await _context.SaveChangesAsync();
+            }
+
+            return GetComment(commentId);
         }
     }
 }

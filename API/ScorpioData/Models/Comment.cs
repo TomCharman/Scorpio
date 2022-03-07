@@ -13,6 +13,7 @@ namespace ScorpioData.Models
 		public DateTime PostedDate { get; set; }
 
 		public User User { get; set; }
+		public List<Vote> Votes { get; set; }
 
 		public CommentDto ToDto()
         {
@@ -23,6 +24,7 @@ namespace ScorpioData.Models
 				UserId = UserId,
 				User = User?.ToDto(),
 				PostedDate = PostedDate,
+				VoteCount = Votes?.Count,
 			};
         }
 	}
