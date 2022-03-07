@@ -26,7 +26,7 @@ namespace ScorpioData.Services
 
 			var userCount = _context.Users.Count();
 			var rando = new Random();
-			var randomInt = rando.Next(1, userCount);
+			var randomInt = rando.Next(1, userCount + 1);
 
 			var user = _context.Users
 				.First(u => u.Id == randomInt);
