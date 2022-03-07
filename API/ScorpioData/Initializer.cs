@@ -1,13 +1,14 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
 using ScorpioData.Models;
 
 namespace ScorpioData
 {
 	public static class Initializer
 	{
-		public static void Initialize(Context context)
+		public static async Task Initialize(Context context)
 		{
-			context.Database.EnsureCreated();
+			await context.Database.MigrateAsync();
 
 			if (context.Users.Any())
             {
@@ -21,8 +22,8 @@ namespace ScorpioData
 				new User { Name = "Servalan" },
 				new User { Name = "Vila Restal" },
 			};
-			context.Users.AddRange(seedUsers);
-			context.SaveChanges();
+			await context.Users.AddRangeAsync(seedUsers);
+			await context.SaveChangesAsync();
 		}
 	}
 }

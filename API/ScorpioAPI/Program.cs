@@ -56,7 +56,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<Context>();
-        Initializer.Initialize(context);
+        await Initializer.Initialize(context);
     } catch (Exception e)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
