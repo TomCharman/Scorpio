@@ -14,11 +14,6 @@ const setMe = (me) => {
     myAvatar.innerHTML = makeAvatar(me)
 }
 
-const onVote = (commentId) => {
-    console.log('does this even work', commentId)
-    putVote(commentId)
-}
-
 const drawComments = () => {
     const html = comments
         .map(c => makeComment(c))
@@ -38,6 +33,17 @@ const drawComments = () => {
     })
 }
 
+const onVote = (commentId) => {
+    console.log('does this even work', commentId)
+    putVote(commentId)
+        .then(data => {
+            comments = comments.map(c => c.id === commentId ? data : c)
+            drawComments()
+        })
+}
+
+// On initial page load
+
 commentButton.onclick = function(e) {
     console.log('hi', commentText.value)
     postComment(commentText.value)
@@ -46,9 +52,6 @@ commentButton.onclick = function(e) {
             drawComments()
         })
 }
-
-
-// On load
 
 getMe()
     .then(response => setMe(response))
