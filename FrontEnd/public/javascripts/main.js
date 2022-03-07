@@ -1,3 +1,4 @@
+import LikeButton from "../react/Upvote.js"
 import { getComments, getMe, postComment, putVote } from "./api.js"
 import { makeAvatar, makeComment } from "./components.js"
 
@@ -10,7 +11,6 @@ const myAvatar = document.getElementById('myAvatar')
 const commentText = document.getElementById('commentText')
 
 const setMe = (me) => {
-    console.log('I am me', me)
     myAvatar.innerHTML = makeAvatar(me)
 }
 
@@ -25,16 +25,13 @@ const drawComments = () => {
         var comment = document.getElementById(`comment-${c.id}`)
         
         if (comment) {
-            comment.onclick = () => onVote(c.id)
+            const upvoteContainer = comment.getElementsByClassName("upvote")[0]
+            ReactDOM.render(React.createElement(LikeButton, { comment: c, onVote }), upvoteContainer);
         }
-        
-        // .onclick = () => onVote(c.id)
-        console.log('comment', c.id, comment)
     })
 }
 
 const onVote = (commentId) => {
-    console.log('does this even work', commentId)
     putVote(commentId)
         .then(data => {
             comments = comments.map(c => c.id === commentId ? data : c)

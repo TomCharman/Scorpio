@@ -15,7 +15,7 @@ export const makeComment = (comment) => {
             </div>
             <div class="commentText">${comment.text}</div>
             <div class="commentLinks">
-                <a>▲ Upvote${comment.voteCount > 0 ? ` (${comment.voteCount})` : ''}</a>
+                <span class="upvote"></span>
                 <a>Reply</a>
             </div>
         </div>
