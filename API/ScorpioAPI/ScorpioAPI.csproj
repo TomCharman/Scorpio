@@ -22,8 +22,14 @@
   <ItemGroup>
     <None Remove="Avatars\" />
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
+    <None Remove="Hubs\" />
+    <None Remove="Models\" />
+    <None Remove="Hubs\Clients\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Avatars\" />
+    <Folder Include="Hubs\" />
+    <Folder Include="Models\" />
+    <Folder Include="Hubs\Clients\" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@ import { makeAvatar, makeComment } from "./components.js"
 console.log('hi')
 var comments = []
 
-const commentContainer =  document.getElementById('commentContainer')
+const commentContainer = document.getElementById('commentContainer')
 const commentButton = document.getElementById('commentButton')
 const myAvatar = document.getElementById('myAvatar')
 const commentText = document.getElementById('commentText')
@@ -23,7 +23,7 @@ const drawComments = () => {
 
     comments.forEach(c => {
         var comment = document.getElementById(`comment-${c.id}`)
-        
+
         if (comment) {
             const upvoteContainer = comment.getElementsByClassName("upvote")[0]
             ReactDOM.render(React.createElement(LikeButton, { comment: c, onVote }), upvoteContainer);
@@ -41,7 +41,7 @@ const onVote = (commentId) => {
 
 // On initial page load
 
-commentButton.onclick = function(e) {
+commentButton.onclick = function (e) {
     console.log('hi', commentText.value)
     postComment(commentText.value)
         .then(data => {
@@ -58,3 +58,23 @@ getComments()
         comments = data
         drawComments()
     })
+
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl(`https://localhost:7001/hubs/upvote`)
+    .withAutomaticReconnect()
+    .build()
+
+connection.start()
+    .then(result => {
+        console.log('connected?', result)
+
+        connection.on('ReceiveMessage', message => {
+            console.log('received info', message)
+
+            comments = comments.map(c => message.commentId == c.id
+                ? { ...c, voteCount: message.voteCount }
+                : c)
+            drawComments()
+        });
+    })
+    .catch(e => console.error('Connection failed: ', e))

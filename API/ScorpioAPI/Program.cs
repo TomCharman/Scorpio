@@ -1,6 +1,7 @@
 ﻿using ScorpioData;
 using ScorpioData.Services;
 using Microsoft.EntityFrameworkCore;
+using ScorpioAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors(c =>
 {
-    c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+    c.AddPolicy("AllowOrigin", options =>
+    {
+        options.WithOrigins("http://localhost:3000");
+        options.AllowCredentials();
+    });
 });
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
@@ -40,13 +46,15 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<UpvoteHub>("/hubs/upvote");
 
 app.UseCors(options =>
 {
     // This feels dirty
-    options.AllowAnyOrigin();
+    options.WithOrigins("http://localhost:3000");
     options.AllowAnyMethod();
     options.AllowAnyHeader();
+    options.AllowCredentials();
 });
 
 
@@ -63,7 +71,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(e, "An error occurred creating the DB");
     }
 }
-
 
 app.Run();
 

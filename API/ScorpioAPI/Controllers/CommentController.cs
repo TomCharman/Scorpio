@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using ScorpioData.Dtos;
 using ScorpioData.Services;
 using Microsoft.AspNetCore.Mvc;
+using ScorpioAPI.Hubs.Clients;
+using Microsoft.AspNetCore.SignalR;
+using ScorpioAPI.Hubs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,10 +17,12 @@ namespace ScorpioAPI.Controllers
     public class CommentController : Controller
     {
         private readonly ICommentService _commentService;
+        private readonly IHubContext<UpvoteHub, IUpvoteClient> _upvoteHub;
 
-        public CommentController(ICommentService commentService)
+        public CommentController(ICommentService commentService, IHubContext<UpvoteHub, IUpvoteClient> upvoteHub)
         {
             _commentService = commentService;
+            _upvoteHub = upvoteHub;
         }
 
         [HttpGet]
@@ -25,12 +30,6 @@ namespace ScorpioAPI.Controllers
         {
             var comments = _commentService.GetComments();
             return comments;
-        }
-
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
         [HttpPost]
@@ -41,7 +40,16 @@ namespace ScorpioAPI.Controllers
 
         [HttpPut("{id}/vote")]
         public async Task<ActionResult<CommentDto?>> UpvoteCommentAsync(int id){
-            return await _commentService.UpvoteCommentAsync(id);
+            var updatedComment = await _commentService.UpvoteCommentAsync(id);
+            if (updatedComment != null)
+            {
+                await _upvoteHub.Clients.All.ReceiveMessage(new Models.UpvoteMessage
+                {
+                    CommentId = updatedComment.Id,
+                    VoteCount = updatedComment.VoteCount ?? 0,
+                });
+            }
+            return updatedComment;
         }
     }
 }

@@ -35,6 +35,7 @@ namespace ScorpioData.Services
         public List<CommentDto> GetComments()
         {
 			var comments = _context.Comments
+                .OrderByDescending(c => c.PostedDate)
                 .Include(c => c.User)
                 .Select(c => new
                 {
