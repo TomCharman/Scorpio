@@ -11,9 +11,12 @@ namespace ScorpioData.Models
 		public string Text { get; set; }
 		public int UserId { get; set; }
 		public DateTime PostedDate { get; set; }
+		public int? ParentCommentId { get; set; }
 
 		public User User { get; set; }
 		public List<Vote> Votes { get; set; }
+		public Comment ParentComment { get; set; }
+		public List<Comment> ChildComments { get; set; }
 
 		public CommentDto ToDto()
         {
@@ -25,6 +28,8 @@ namespace ScorpioData.Models
 				User = User?.ToDto(),
 				PostedDate = PostedDate,
 				VoteCount = Votes?.Count,
+				ParentCommentId = ParentCommentId,
+				ChildComments = ChildComments?.Select(c => c.ToDto()).ToList(),
 			};
         }
 	}

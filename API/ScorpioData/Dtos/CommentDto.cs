@@ -11,6 +11,8 @@ namespace ScorpioData.Dtos
 		public UserDto? User { get; set; }
 		public DateTime PostedDate { get; set; }
 		public int? VoteCount { get; set; }
+		public int? ParentCommentId { get; set; }
+		public List<CommentDto> ChildComments { get; set; }
 	}
 }
 
