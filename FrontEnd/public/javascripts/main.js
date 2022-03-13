@@ -2,7 +2,6 @@ import LikeButton from "../react/Upvote.js"
 import { getComments, getMe, postComment, putVote } from "./api.js"
 import { makeAvatar, makeComment } from "./components.js"
 
-console.log('hi')
 var comments = []
 
 const commentContainer = document.getElementById('commentContainer')
@@ -14,20 +13,48 @@ const setMe = (me) => {
     myAvatar.innerHTML = makeAvatar(me)
 }
 
+const updateNestedComment = (parentCommentId, newComment) => {
+    comments = comments.map(c => c.id === parentCommentId
+        ? { ...c, childComments: [newComment, ...(c.childComments || [])] }
+        : c)
+    drawComments()
+}
+
+const applyLinksToComment = (c) => {
+    var comment = document.getElementById(`comment-${c.id}`)
+
+    if (comment) {
+        const upvoteContainer = comment.getElementsByClassName("upvote")[0]
+        ReactDOM.render(React.createElement(LikeButton, { comment: c, onVote }), upvoteContainer);
+
+        const replyLinks = comment.getElementsByClassName("replyLink")
+        if (replyLinks.length > 0) {
+            replyLinks[0].onclick = () => onReply(c.id)
+        }
+
+        const commentButtons = comment.getElementsByClassName("commentButton")
+        if (commentButtons.length > 0) {
+            commentButtons[0].onclick = () => {
+                const replyText = document.getElementById(`postReply-${c.id}`)
+                    .getElementsByClassName('commentText')[0]
+                postComment(replyText.value, c.id)
+                    .then(data => updateNestedComment(c.id, data))
+            }
+        }
+    }
+
+    c.childComments?.forEach(nc => applyLinksToComment(nc))
+}
+
 const drawComments = () => {
     const html = comments
-        .map(c => makeComment(c))
+        .map(c => makeComment(c, true))
         .join('\n')
 
     commentContainer.innerHTML = html
 
     comments.forEach(c => {
-        var comment = document.getElementById(`comment-${c.id}`)
-
-        if (comment) {
-            const upvoteContainer = comment.getElementsByClassName("upvote")[0]
-            ReactDOM.render(React.createElement(LikeButton, { comment: c, onVote }), upvoteContainer);
-        }
+        applyLinksToComment(c)
     })
 }
 
@@ -39,13 +66,18 @@ const onVote = (commentId) => {
         })
 }
 
+const onReply = (commentId) => {
+    const replyBox = document.getElementById(`postReply-${commentId}`)
+    replyBox.classList.remove("hidden")
+}
+
 // On initial page load
 
 commentButton.onclick = function (e) {
-    console.log('hi', commentText.value)
     postComment(commentText.value)
         .then(data => {
-            comments = [...comments, data]
+            commentText.value = ''
+            comments = [data, ...comments]
             drawComments()
         })
 }
@@ -66,14 +98,14 @@ const connection = new signalR.HubConnectionBuilder()
 
 connection.start()
     .then(result => {
-        console.log('connected?', result)
-
         connection.on('ReceiveMessage', message => {
-            console.log('received info', message)
-
             comments = comments.map(c => message.commentId == c.id
                 ? { ...c, voteCount: message.voteCount }
-                : c)
+                : {
+                    ...c, childComments: c.childComments?.map(cc => cc.id === message.commentId
+                        ? { ...cc, voteCount: message.voteCount }
+                        : cc)
+                })
             drawComments()
         });
     })

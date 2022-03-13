@@ -13,16 +13,16 @@ export const getMe = () => {
 export const getComments = () => {
     console.log('I am get comments')
     return fetch(`${baseApi}/comment`)
-    .then(response => response.json())
-    .catch(error => console.warn('error!', error))
+        .then(response => response.json())
+        .catch(error => console.warn('error!', error))
 }
 
-export const postComment = (commentText) => {
+export const postComment = (commentText, parentCommentId = null) => {
     return fetch(`${baseApi}/comment`, {
         method: 'POST',
         headers: defaultHeaders,
         mode: 'cors',
-        body: JSON.stringify({ text: commentText })
+        body: JSON.stringify({ text: commentText, parentCommentId })
     })
         .then(response => {
             console.log('posted', response)
