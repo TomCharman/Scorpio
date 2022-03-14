@@ -21,7 +21,6 @@ namespace ScorpioData
 				.HasForeignKey(c => c.ParentCommentId)
 				.IsRequired(false);
         }
-
 	}
 }
 

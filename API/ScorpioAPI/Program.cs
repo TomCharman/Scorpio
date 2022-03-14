@@ -25,7 +25,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 28));
-var connectionString = "server=localhost;user=root;password=PtMt1@nMiM;database=ef";
+var connectionString = builder.Configuration.GetConnectionString("appDb");
 builder.Services.AddDbContext<Context>(options => options.UseMySql(connectionString, serverVersion, mySqlOptions => mySqlOptions.EnableRetryOnFailure())
     .LogTo(Console.WriteLine, LogLevel.Information)
     .EnableSensitiveDataLogging()
